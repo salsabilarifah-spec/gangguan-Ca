@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulator Analisis Kalsium (Ca) dengan FAAS - Politeknik AKA Bogor</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js (3D Graphics) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- Chart.js (Kurva Kalibrasi) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: flex; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans h-screen flex overflow-hidden">
+
+    <!-- SIDEBAR NAVIGASI UTAMA -->
+    <aside class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col shrink-0 select-none z-30">
+        <div class="p-5 border-b border-slate-800 flex items-center space-x-3">
+            <div class="bg-emerald-600 text-white font-bold p-2 rounded-xl text-sm shadow">
+                <i class="fa-solid fa-atom"></i>
+            </div>
+            <div>
+                <h1 class="text-xs font-bold text-white tracking-wider">SIMULATOR FAAS</h1>
+                <p class="text-[10px] text-slate-400">Analisis Kalsium & Matriks</p>
+            </div>
+        </div>
+        
+        <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto custom-scrollbar">
+            <button onclick="switchTab('home')" id="nav-home" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium bg-emerald-600 text-white transition shadow">
+                <i class="fa-solid fa-house w-5"></i> <span>Home Lab</span>
+            </button>
+            <button onclick="switchTab('faas')" id="nav-faas" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                <i class="fa-solid fa-cube w-5"></i> <span>Simulasi FAAS 3D</span>
+            </button>
+            <button onclick="switchTab('matriks')" id="nav-matriks" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                <i class="fa-solid fa-flask-vial w-5"></i> <span>Matriks & Gangguan Ca</span>
+            </button>
+            <button onclick="switchTab('perhitungan')" id="nav-perhitungan" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                <i class="fa-solid fa-calculator w-5"></i> <span>Perhitungan & Kurva</span>
+            </button>
+            <button onclick="switchTab('pelaporan')" id="nav-pelaporan" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                <i class="fa-solid fa-file-arrow-down w-5"></i> <span>Pelaporan Hasil</span>
+            </button>
+        </nav>
+
+        <div class="p-4 border-t border-slate-800 text-[10px] text-slate-500 text-center">
+            Politeknik AKA Bogor • Analisis Instrumental
+        </div>
+    </aside>
+
+    <!-- KONTEN UTAMA APLIKASI -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden bg-slate-950 relative">
+
+        <!-- ================= TAB 1: HOME ================= -->
+        <div id="tab-home" class="tab-content active flex-1 flex-col relative overflow-y-auto">
+            <!-- Background Lab Nyata dengan Overlay Gradient -->
+            <div class="absolute inset-0 z-0 bg-cover bg-center opacity-30" style="background-image: url('https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?q=80&w=1600&auto=format&fit=crop');"></div>
+            <div class="absolute inset-0 z-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent"></div>
+
+            <div class="relative z-10 flex-1 flex flex-col items-center justify-center p-8 text-center max-w-3xl mx-auto my-auto">
+                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 mb-4">
+                    Praktikum Virtual Instrumen Lanjutan
+                </span>
+                <h1 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-4">
+                    Analisis Penentuan Kalsium (Ca) Menggunakan <span class="text-emerald-400">FAAS</span>
+                </h1>
+                <p class="text-slate-300 text-sm md:text-base leading-relaxed mb-8">
+                    Eksplorasi mendalam instrumen Flame Atomic Absorption Spectrophotometry (FAAS), simulasi operasional instrumen lengkap dengan sistem gas, kompresor, UPS, penanganan matriks gangguan sulfat/fosfat, hingga pembuatan laporan otomatis.
+                </p>
+                <div class="flex flex-wrap gap-3 justify-center">
+                    <button onclick="switchTab('faas')" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-xs shadow-lg transition flex items-center gap-2">
+                        <i class="fa-solid fa-play"></i> Mulai Simulasi 3D FAAS
+                    </button>
+                    <button onclick="switchTab('matriks')" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl text-xs border border-slate-700 transition">
+                        Pelajari Teori Matriks & Gangguan
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= TAB 2: FAAS 3D SIMULATOR ================= -->
+        <div id="tab-faas" class="tab-content flex-1 flex-col lg:flex-row h-full overflow-hidden">
+            <!-- Sisi Kiri: 3D Canvas Interaktif -->
+            <div class="flex-1 flex flex-col relative bg-slate-900 border-r border-slate-800 h-full">
+                <!-- Top Overlay Info -->
+                <div class="absolute top-3 left-3 z-10 bg-slate-950/80 backdrop-blur border border-slate-800 p-2.5 rounded-xl text-xs shadow">
+                    <p class="font-bold text-white flex items-center gap-1.5"><i class="fa-solid fa-cube text-emerald-400"></i> Unit FAAS & Pendukung</p>
+                    <p class="text-[10px] text-slate-400">Operasikan perangkat berurutan di panel samping</p>
+                </div>
+
+                <!-- Three.js Canvas -->
+                <div id="canvas-container" class="w-full flex-1 cursor-grab active:cursor-grabbing"></div>
+
+                <!-- Zoom Box Detail Kanan Bawah (Sesuai Permintaan) -->
+                <div class="absolute bottom-3 right-3 z-10 bg-slate-950/90 backdrop-blur border border-emerald-500/50 p-3 rounded-xl shadow-2xl w-72">
+                    <div class="flex justify-between items-center text-[11px] font-semibold text-emerald-400 mb-1 border-b border-slate-800 pb-1">
+                        <span><i class="fa-solid fa-magnifying-glass"></i> ZOOM DETAIL PROSES</span>
+                        <span id="zoom-status-label" class="text-amber-400 font-mono text-[10px]">STANDBY</span>
+                    </div>
+                    <div id="zoom-content" class="text-[11px] text-slate-300 h-16 flex items-center justify-center text-center">
+                        Hidupkan UPS, Komputer, Gas, dan Nyalakan Api untuk melihat animasi proses atomisasi & aerosol.
+                    </div>
+                </div>
+
+                <!-- Kontrol Utama Tombol Operasional FAAS -->
+                <div class="absolute bottom-3 left-3 z-10 bg-slate-950/90 backdrop-blur border border-slate-800 p-2.5 rounded-xl flex flex-wrap items-center gap-2 shadow">
+                    <button onclick="opStepUps()" id="btn-ups" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-semibold border border-slate-700 transition">1. UPS: OFF</button>
+                    <button onclick="opStepComp()" id="btn-comp" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-semibold border border-slate-700 transition">2. Kompresor: OFF</button>
+                    <button onclick="opStepGas()" id="btn-gas" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-semibold border border-slate-700 transition">3. Gas C2H2: CLOSED</button>
+                    <button onclick="opStepFlame()" id="btn-flame" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-xs font-semibold transition">4. Nyalakan Api</button>
+                    <button onclick="opStepAspirate()" id="btn-asp" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold transition">5. Aspirasi Sampel Ca</button>
+                </div>
+            </div>
+
+            <!-- Sisi Kanan: Panel Panel Instrumen & Komputer Virtual -->
+            <div class="w-full lg:w-80 bg-slate-900 p-4 flex flex-col space-y-4 overflow-y-auto custom-scrollbar shrink-0">
+                <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                    <i class="fa-solid fa-desktop text-emerald-400"></i> Monitor & Kontrol FAAS
+                </h2>
+
+                <!-- Layar Komputer / Software Simulasi -->
+                <div class="bg-black border border-slate-700 p-3 rounded-xl font-mono text-xs space-y-2 shadow-inner">
+                    <div class="flex justify-between text-[10px] text-emerald-500 border-b border-slate-800 pb-1">
+                        <span>GBC AVANTA SOFTWARE</span>
+                        <span id="pc-status">OFFLINE</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 text-[10px] block">ELEMENT: CA (CALCIUM)</span>
+                        <div class="text-lg font-bold text-emerald-400" id="pc-readout">0.0000 Abs</div>
+                    </div>
+                    <div class="text-[10px] text-slate-400 space-y-0.5 border-t border-slate-800 pt-1">
+                        <div class="flex justify-between"><span>Wavelength:</span> <b class="text-white">422.7 nm</b></div>
+                        <div class="flex justify-between"><span>Slit Width:</span> <b class="text-white">0.5 nm</b></div>
+                        <div class="flex justify-between"><span>Flame Type:</span> <b class="text-white">Air-Acetylene</b></div>
+                    </div>
+                </div>
+
+                <!-- Parameter Pengujian Sampel Ca -->
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2.5">
+                    <h3 class="text-xs font-semibold text-white">Parameter Larutan Uji Ca</h3>
+                    <div>
+                        <label class="block text-[10px] text-slate-400 mb-1">Konsentrasi Kalsium (ppm)</label>
+                        <input type="range" id="ca-conc-slider" min="0" max="5" step="0.1" value="2.0" oninput="updateCaSlider(this.value)" class="w-full accent-emerald-500">
+                        <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                            <span>0 ppm</span>
+                            <span id="val-ca-slider" class="text-emerald-400 font-bold">2.0 ppm</span>
+                            <span>5 ppm</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-400 mb-1">Penambahan Masking/Releasing Agent</label>
+                        <select id="agent-select" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200">
+                            <option value="none">Tanpa Agen (Ada Gangguan Sulfat/Fosfat)</option>
+                            <option value="lanthanum">Penambahan Lanthanum (Releasing Agent)</option>
+                            <option value="edta">Penambahan EDTA (Masking Agent)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Log Aktivitas Prosedur -->
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex-1 flex flex-col">
+                    <h3 class="text-xs font-semibold text-white mb-2">Log Prosedur Operasional</h3>
+                    <div id="log-container" class="flex-1 bg-slate-900 p-2 rounded-lg text-[10px] font-mono text-slate-300 space-y-1 overflow-y-auto h-32">
+                        <p class="text-slate-500">[00:00] Sistem siap. Ikuti urutan tombol 1 sampai 5.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= TAB 3: MATRIKS & GANGGUAN CA ================= -->
+        <div id="tab-matriks" class="tab-content flex-1 flex-col p-6 overflow-y-auto max-w-5xl mx-auto space-y-6">
+            <div>
+                <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider">Teori Analisis Instrumental</span>
+                <h2 class="text-2xl font-bold text-white mt-1">Matriks Gangguan Analisis Kalsium (Ca) & Peran Agen</h2>
+                <p class="text-slate-300 text-xs mt-1">Pemahaman teoritis mengenai interferensi kimia, ionisasi, serta mekanisme penambahan zat pengikat dalam FAAS.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Kartu Sulfat & Fosfat -->
+                <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-rose-500/20 text-rose-400 p-2.5 rounded-lg text-sm"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                        <h3 class="font-bold text-white text-sm">Gangguan Sulfat ($SO_4^{2-}$) & Fosfat ($PO_4^{3-}$)</h3>
+                    </div>
+                    <p class="text-slate-300 text-xs leading-relaxed">
+                        Secara teoritis, ion kalsium ($Ca^{2+}$) di dalam nyala api dapat bereaksi dengan anion seperti sulfat atau fosfat membentuk senyawa tahan panas (refraktori) berupa Kalsium Pirofosfat ($Ca_2P_2O_7$) atau Kalsium Sulfat ($CaSO_4$).
+                    </p>
+                    <p class="text-slate-300 text-xs leading-relaxed">
+                        Senyawa refraktori ini tidak mudah terdisosiasi menjadi atom netral ($Ca^0$) pada suhu nyala udara-asetilena biasa, mengakibatkan jumlah atom gas ground-state berkurang drastis dan menyebabkan hasil absorbansi menjadi <b>lebih rendah dari yang seharusnya (negative interference)</b>.
+                    </p>
+                </div>
+
+                <!-- Kartu Releasing & Masking Agent -->
+                <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-emerald-500/20 text-emerald-400 p-2.5 rounded-lg text-sm"><i class="fa-solid fa-shield-heart"></i></div>
+                        <h3 class="font-bold text-white text-sm">Peran Releasing & Masking Agent</h3>
+                    </div>
+                    <p class="text-slate-300 text-xs leading-relaxed">
+                        <b>Releasing Agent (Contoh: Garam Lanthanum / $LaCl_3$):</b> Lanthanum memiliki afinitas yang jauh lebih kuat terhadap fosfat/sulfat dibandingkan Kalsium. Lanthanum akan bereaksi lebih dulu dengan fosfat membentuk senyawa refraktori menggantikan kalsium, sehingga ion $Ca^{2+}$ terbebas dan dapat teratomisasi sempurna di dalam nyala api.
+                    </p>
+                    <p class="text-slate-300 text-xs leading-relaxed">
+                        <b>Masking Agent (Contoh: EDTA):</b> Berfungsi mengikat ion logam pengganggu melalui pembentukan kompleks khelat yang stabil di dalam larutan sebelum masuk ke nebulizer.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Animasi Perubahan Wujud & Eksitasi Ca -->
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl space-y-4">
+                <h3 class="font-bold text-white text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-atom text-emerald-400"></i> Alur Perubahan Wujud & Eksitasi Atom Kalsium dalam Nyala FAAS
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-center">
+                    <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                        <span class="text-xs font-bold text-emerald-400 block mb-1">1. Nebulisasi</span>
+                        <p class="text-[11px] text-slate-300">Larutan sampel diubah menjadi aerosol halus oleh gas oksidant.</p>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                        <span class="text-xs font-bold text-emerald-400 block mb-1">2. Desolvasi & Volatilisasi</span>
+                        <p class="text-[11px] text-slate-300">Pelarut menguap, padatan garam Kalsium meleleh dan menguap.</p>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                        <span class="text-xs font-bold text-emerald-400 block mb-1">3. Atomisasi (Ground State)</span>
+                        <p class="text-[11px] text-slate-300">Molekul terurai menjadi atom netral $Ca^0$ yang menyerap sinar HCL.</p>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                        <span class="text-xs font-bold text-emerald-400 block mb-1">4. Eksitasi / Ionisasi</span>
+                        <p class="text-[11px] text-slate-300">Sebagian kecil atom tereksitasi atau terionisasi ($Ca^+$) oleh suhu api.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= TAB 4: PERHITUNGAN & KURVA ================= -->
+        <div id="tab-perhitungan" class="tab-content flex-1 flex-col p-6 overflow-y-auto max-w-6xl mx-auto space-y-6">
+            <div>
+                <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider">Kalkulator Analisis Kuantitatif</span>
+                <h2 class="text-2xl font-bold text-white mt-1">Perhitungan Pembuatan Deret Standar & Kurva Kalibrasi Ca</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Kolom Input Parameter & Kalkulator Pipet -->
+                <div class="lg:col-span-5 space-y-4">
+                    <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-3">
+                        <h3 class="font-bold text-white text-xs uppercase tracking-wider text-emerald-400">1. Parameter Pembuatan Deret</h3>
+                        <div>
+                            <label class="block text-[11px] text-slate-400 mb-1">Konsentrasi Larutan Induk Ca (mg/L / ppm)</label>
+                            <input type="number" id="param-induk" value="100" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs font-mono text-white">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-slate-400 mb-1">Volume Labu Takar Deret (mL)</label>
+                            <input type="number" id="param-vol-labu" value="100" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs font-mono text-white">
+                        </div>
+                        <button onclick="hitungPipetDeret()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg text-xs transition">
+                            Hitung Volume Pipet Deret
+                        </button>
+                    </div>
+
+                    <!-- Tabel Hasil Perhitungan Volume Pipet -->
+                    <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-3">
+                        <h3 class="font-bold text-white text-xs uppercase tracking-wider text-emerald-400">2. Panduan Volume Pipet</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs font-mono">
+                                <thead class="border-b border-slate-800 text-slate-400 text-[10px]">
+                                    <tr>
+                                        <th class="pb-2">Target (ppm)</th>
+                                        <th class="pb-2">Volume Dipipet (mL)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabel-pipet-body" class="divide-y divide-slate-800/50 text-slate-300">
+                                    <tr><td>1.0 ppm</td><td>1.0 mL</td></tr>
+                                    <tr><td>2.0 ppm</td><td>2.0 mL</td></tr>
+                                    <tr><td>3.0 ppm</td><td>3.0 mL</td></tr>
+                                    <tr><td>4.0 ppm</td><td>4.0 mL</td></tr>
+                                    <tr><td>5.0 ppm</td><td>5.0 mL</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kolom Input Absorbansi & Grafik Kurva Kalibrasi -->
+                <div class="lg:col-span-7 space-y-4">
+                    <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-3">
+                        <div class="flex justify-between items-center">
+                            <h3 class="font-bold text-white text-xs uppercase tracking-wider text-emerald-400">3. Input Absorbansi & Regresi Linear</h3>
+                            <button onclick="prosesRegresi()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold transition">Generate Kurva</button>
+                        </div>
+                        <div class="grid grid-cols-5 gap-2 text-center">
+                            <div><label class="text-[10px] text-slate-400 block mb-1">1 ppm</label><input type="number" id="abs-1" value="0.185" step="0.001" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-center font-mono text-white"></div>
+                            <div><label class="text-[10px] text-slate-400 block mb-1">2 ppm</label><input type="number" id="abs-2" value="0.368" step="0.001" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-center font-mono text-white"></div>
+                            <div><label class="text-[10px] text-slate-400 block mb-1">3 ppm</label><input type="number" id="abs-3" value="0.552" step="0.001" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-center font-mono text-white"></div>
+                            <div><label class="text-[10px] text-slate-400 block mb-1">4 ppm</label><input type="number" id="abs-4" value="0.735" step="0.001" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-center font-mono text-white"></div>
+                            <div><label class="text-[10px] text-slate-400 block mb-1">5 ppm</label><input type="number" id="abs-5" value="0.920" step="0.001" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-center font-mono text-white"></div>
+                        </div>
+
+                        <!-- Hasil Regresi -->
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 flex justify-between items-center font-mono text-xs">
+                            <div>Persamaan: <b id="res-eq" class="text-emerald-400">y = 0.1835x + 0.0015</b></div>
+                            <div>R² = <b id="res-r2" class="text-emerald-400">0.9995</b></div>
+                        </div>
+                    </div>
+
+                    <!-- Grafik Chart.js -->
+                    <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl">
+                        <div class="h-60 relative">
+                            <canvas id="calibrationChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= TAB 5: PELAPORAN HASIL ================= -->
+        <div id="tab-pelaporan" class="tab-content flex-1 flex-col p-6 overflow-y-auto max-w-5xl mx-auto space-y-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider">Dokumen Resmi Praktikum</span>
+                    <h2 class="text-2xl font-bold text-white mt-1">Pelaporan Hasil Analisis Kalsium (Ca)</h2>
+                </div>
+                <button onclick="downloadLaporan()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-xs shadow-lg transition flex items-center gap-2">
+                    <i class="fa-solid fa-download"></i> Download Laporan (.html / Print)
+                </button>
+            </div>
+
+            <!-- Preview Dokumen Laporan -->
+            <div id="laporan-dokumen" class="bg-white text-slate-900 p-8 rounded-2xl shadow-2xl space-y-6 font-sans">
+                <div class="text-center border-b-2 border-slate-800 pb-4">
+                    <h3 class="text-lg font-bold uppercase text-slate-900">POLITEKNIK AKA BOGOR</h3>
+                    <p class="text-xs font-semibold text-slate-600">PROGRAM STUDI D3 ANALISIS KIMIA • LABORATORIUM INSTRUMENTAL</p>
+                    <h
